@@ -51,6 +51,13 @@ public class EchoServer extends AbstractServer
     System.out.println("Message received: " + msg + " from " + client);
     this.sendToAllClients(msg);
   }
+  
+  public void handleMessageFromServer (Object msg) {
+	  
+	  System.out.println("SERVER MSG> "+msg);
+	  this.sendToAllClients("SERVER MSG> "+msg);
+	  
+  }
     
   /**
    * This method overrides the one in the superclass.  Called

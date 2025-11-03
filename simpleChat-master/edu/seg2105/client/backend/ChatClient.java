@@ -107,7 +107,7 @@ public class ChatClient extends AbstractClient
 		  
 	  }
 	  
-	  else if (command.equals("#sethost")) {
+	  else if (command.startsWith("#sethost")) {
 		  
 		  if (!isConnected()) {
 			  
@@ -123,7 +123,7 @@ public class ChatClient extends AbstractClient
 		  
 	  }
 	  
-	  else if (command.equals("#setport")) {
+	  else if (command.startsWith("#setport")) {
 		  
 		  if (!isConnected()) {
 			  
