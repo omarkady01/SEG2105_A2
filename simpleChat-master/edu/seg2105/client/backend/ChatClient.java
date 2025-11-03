@@ -4,6 +4,7 @@
 
 package edu.seg2105.client.backend;
 
+
 import ocsf.client.*;
 
 import java.io.*;
@@ -71,7 +72,18 @@ public class ChatClient extends AbstractClient
   {
     try
     {
-      sendToServer(message);
+    	
+    if (message.startsWith("#")) {
+    	
+    	handleCommand(message);
+    	
+    }
+    
+    else {
+    	
+    	sendToServer(message);
+    	
+    	}
     }
     catch(IOException e)
     {
@@ -79,6 +91,85 @@ public class ChatClient extends AbstractClient
         ("Could not send message to server.  Terminating client.");
       quit();
     }
+  }
+  
+  private void handleCommand(String command) {
+	  
+	  if (command.equals("#quit")) {
+		  
+		  quit();
+		  
+	  }
+	  
+	  else if (command.equals("#logoff")) {
+		  
+		  connectionClosed();
+		  
+	  }
+	  
+	  else if (command.equals("#sethost")) {
+		  
+		  if (!isConnected()) {
+			  
+			  command = command.substring(command.indexOf("<")+1);
+			  command = command.substring(0,command.indexOf(">"));
+			  setHost(command);
+			  
+		  } else {
+			  
+			  clientUI.display("ERROR: Client Must Be Logged Off to Proccess Request");
+			  
+		  }
+		  
+	  }
+	  
+	  else if (command.equals("#setport")) {
+		  
+		  if (!isConnected()) {
+			  
+			  command = command.substring(command.indexOf("<")+1);
+			  command = command.substring(0,command.indexOf(">"));
+			  setPort(Integer.parseInt(command));
+			  
+		  } else {
+			  
+			  clientUI.display("ERROR: Client Must Be Logged Off to Proccess Request");
+			  
+		  }
+		  
+	  }
+	  
+	  else if (command.equals("#login")) {
+		  
+		  if (!isConnected()) {
+			  
+			  try {
+				  
+				openConnection();
+				
+			  } catch (IOException e) {
+				
+				  System.out.println("Error Logging in, Please try Again");
+				  
+			  }
+		  } else {
+			  
+			  clientUI.display("ERROR: Client Must Be Logged Off to Proccess Request");
+		  }
+		  
+	  }
+	  
+	  else if (command.equals("#gethost")) {
+		  
+		  clientUI.display(getHost());
+		  
+	  }
+	  
+	  else if (command.equals("#getport")) {
+		  
+		  clientUI.display(Integer.toString(getPort()));
+		  
+	  }
   }
   
   /**
