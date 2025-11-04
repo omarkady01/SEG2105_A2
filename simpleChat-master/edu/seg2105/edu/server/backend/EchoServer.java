@@ -4,6 +4,8 @@ package edu.seg2105.edu.server.backend;
 // license found at www.lloseng.com 
 
 
+import java.io.IOException;
+
 import ocsf.server.*;
 
 /**
@@ -22,6 +24,7 @@ public class EchoServer extends AbstractServer
   /**
    * The default port to listen on.
    */
+
   final public static int DEFAULT_PORT = 5555;
   
   //Constructors ****************************************************
@@ -49,7 +52,72 @@ public class EchoServer extends AbstractServer
     (Object msg, ConnectionToClient client)
   {
     System.out.println("Message received: " + msg + " from " + client);
-    this.sendToAllClients(msg);
+    
+    String msgStr = (String) msg;
+    
+    if (msgStr.startsWith("#login")) {
+    	
+    	
+        if (client.getInfo("loginID") != null) {
+        	
+        	try {
+        		
+        		client.sendToClient("ALREADY LOGGED IN");
+        		client.close();
+        	}
+        	catch (IOException e) {
+        		
+        	}
+        	return;
+        }
+    	
+    	
+		msgStr = msgStr.substring(msgStr.indexOf("<")+1);
+		msgStr = msgStr.substring(0,msgStr.indexOf(">"));
+    	
+    	String loginiD = msgStr;
+    	
+    	if (loginiD == null || loginiD.isEmpty()) {
+    		
+    		try {
+    			client.sendToClient("ERROR FINDING LOGIN ID");
+    			client.close();
+    		}
+    		
+    		catch (IOException e) {
+    			
+    		}
+    		
+    		return;
+    	}
+    
+    	
+    	client.setInfo("loginID", loginiD);
+    }
+    	
+    	
+    	String loginiD = (String) client.getInfo("loginID");
+    	
+    	if (loginiD == null) {
+    		
+    		try {
+    			client.sendToClient("MUST LOGIN FIRST");
+    			client.close();
+    			
+    		} catch(IOException e) {
+    			
+    			
+    		}
+    		return;
+    	}
+    	
+    	String send = loginiD+"> "+msgStr;
+    	
+    	System.out.println("Sent From"+loginiD+": "+send);
+    
+        this.sendToAllClients(msg);
+    
+ 
   }
   
   public void handleMessageFromServer (Object msg) {
