@@ -51,7 +51,7 @@ public class EchoServer extends AbstractServer
   public void handleMessageFromClient
     (Object msg, ConnectionToClient client)
   {
-    System.out.println("Message received: " + msg + " from " + client);
+    System.out.println("Message received: " + msg + " from " + client.getInfo("loginID"));
     
     String msgStr = (String) msg;
     
@@ -93,6 +93,8 @@ public class EchoServer extends AbstractServer
     
     	
     	client.setInfo("loginID", loginiD);
+    	sendToAllClients(loginiD + " has logged on");
+    	System.out.println(loginiD + " has logged on");
     }
     	
     	
@@ -113,9 +115,8 @@ public class EchoServer extends AbstractServer
     	
     	String send = loginiD+"> "+msgStr;
     	
-    	System.out.println("Sent From"+loginiD+": "+send);
     
-        this.sendToAllClients(msg);
+        this.sendToAllClients(send);
     
  
   }
@@ -179,20 +180,24 @@ public class EchoServer extends AbstractServer
     catch (Exception ex) 
     {
       System.out.println("ERROR - Could not listen for clients!");
+
     }
+    
+    ServerConsole console = new ServerConsole(sv);
+    console.accept();
   }
   
   @Override
   protected void clientConnected(ConnectionToClient client) {
 	  
-	  System.out.println("Client: "+client+" Connected");
+	  System.out.println("A new client has connected to the server: "+client.getInfo("loginID"));
 	  
   }
   
   @Override
 	synchronized protected void clientDisconnected(ConnectionToClient client) {
 	  
-	  System.out.println("Client: "+client+" Disconnected");
+	  System.out.println("Client: "+client.getInfo("loginID")+" Disconnected");
 	  
 	}
 
